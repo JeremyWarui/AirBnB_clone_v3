@@ -54,7 +54,7 @@ def new_review(place_id):
         return jsonify({"error": "Not a JSON"}), 400
     elif "user_id" not in data:
         return jsonify({"error": "Missing user_id"}), 400
-    elif data["user_id"] != storage.get(User, data["user_id"]):
+    elif storage.get(User, data["user_id"]) is None:
         abort(404)
     elif "text" not in data:
         return jsonify({"error": "Missing text"}), 400
