@@ -13,7 +13,7 @@ from models import storage
 def get_all_reviews(place_id):
     """retrieve the all reviews """
     place = storage.get(Place, place_id)
-    if not place:
+    if place is not None:
         abort(404)
     review_list = [rev.to_dict() for rev in place.reviews]
     return jsonify(review_list), 200
@@ -45,22 +45,22 @@ def del_review(review_id):
 def new_review(place_id):
     """add new review"""
     place = storage.get(Place, place_id)
+    user_id = data["user_id"]
     if place is None:
         abort(404)
     data = request.get_json()
-    if data is None:
+    if not data:
         return jsonify({"error": "Not a JSON"}), 400
     elif "user_id" not in data:
         return jsonify({"error": "Missing user_id"}), 400
-    elif storage.get(User, data["user_id"]) is None:
+    elif storage.get(User, user_id) is None:
         abort(404)
     elif "text" not in data:
         return jsonify({"error": "Missing text"}), 400
     else:
         new_review = Review(**data)
         new_review.place_id = place_id
-        storage.new(new_review)
-        storage.save()
+        new_review.save()
         return jsonify(new_review.to_dict()), 201
 
 
@@ -74,9 +74,6 @@ def update_review(review_id):
     if data is None:
         return jsonify({"error": "Not a JSON"}), 400
 
-    for key, val in data.items():
-        if key not in ['id', 'user_id', 'place_id',
-                       'created_at', 'updated_at']:
-            setattr(review, key, val)
-    storage.save()
+    review.text = data["text"]
+    review.save()
     return jsonify(review.to_dict()), 200
