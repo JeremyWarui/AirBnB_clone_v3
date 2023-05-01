@@ -74,6 +74,6 @@ def update_review(review_id):
     if data is None:
         return jsonify({"error": "Not a JSON"}), 400
 
-    review.text = data["text"]
+    review["text"] = data["text"]
     review.save()
     return jsonify(review.to_dict()), 200
