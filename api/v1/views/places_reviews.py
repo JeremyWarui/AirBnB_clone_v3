@@ -75,6 +75,9 @@ def update_review(review_id):
     if data is None:
         return jsonify({"error": "Not a JSON"}), 400
     else:
-        review.text = data["text"]
+        for key, val in data.items():
+            if key not in ['id', 'user_id', 'place_id',
+                           'created_at', 'updated_at']:
+                setattr(review, key, val)
         review.save()
         return jsonify(review.to_dict()), 200
