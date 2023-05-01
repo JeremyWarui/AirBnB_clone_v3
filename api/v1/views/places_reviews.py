@@ -18,7 +18,7 @@ def get_all_reviews(place_id):
     if place is None:
         abort(404)
     review_list = [rev.to_dict() for rev in place.reviews]
-    return jsonify(review_list), 400
+    return jsonify(review_list), 200
 
 
 @app_views.route("/reviews/<review_id>", methods=["GET"], strict_slashes=False)
