@@ -27,8 +27,19 @@ def get_review(review_id):
     review = storage.get(Review, review_id)
     if review is None:
         abort(404)
-    else:
-        return jsonify(review.to_dict()), 200
+    return jsonify(review.to_dict()), 200
+
+
+@app_views.route("/reviews/<review_id>", methods=["DELETE"],
+                 strict_slashes=False)
+def del_review(review_id):
+    """delete specific review"""
+    review = storage.get(Review, review_id)
+    if review is None:
+        abort(404)
+    review.delete()
+    storage.save()
+    return jsonify({}), 200
 
 
 @app_views.route("places/<place_id>/reviews", methods=["POST"],
@@ -36,10 +47,10 @@ def get_review(review_id):
 def new_review(place_id):
     """add new review"""
     place = storage.get(Place, place_id)
+    data = request.get_json()
     if place is None:
         abort(404)
-    data = request.get_json()
-    if data is None:
+    elif data is None:
         return jsonify({"error": "Not a JSON"}), 400
     elif "user_id" not in data:
         return jsonify({"error": "Missing user_id"}), 400
