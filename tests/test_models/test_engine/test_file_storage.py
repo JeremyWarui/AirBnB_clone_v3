@@ -6,6 +6,7 @@ Contains the TestFileStorageDocs classes
 from datetime import datetime
 import inspect
 import models
+from models import storage
 from models.engine import file_storage
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -125,7 +126,7 @@ class TestFileStorage(unittest.TestCase):
     def test_count(self):
         """test count of objs"""
         models.storage.reload()
-        all_items = models.storage.count()
+        all_items = self.storage.count()
         self.assertIsInstance(all_items, int)
-        class_cnt = models.storage.count(State)
+        class_cnt = self.storage.count(State)
         self.assertIsInstance(class_cnt, int)
