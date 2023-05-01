@@ -45,10 +45,10 @@ def del_review(review_id):
 def new_review(place_id):
     """add new review"""
     place = storage.get(Place, place_id)
-    data = request.get_json()
     if place is None:
         abort(404)
-    elif data is None:
+    data = request.get_json()
+    if data is None:
         return jsonify({"error": "Not a JSON"}), 400
     elif "user_id" not in data:
         return jsonify({"error": "Missing user_id"}), 400
