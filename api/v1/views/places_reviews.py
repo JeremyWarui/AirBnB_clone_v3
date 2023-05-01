@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 """reviews RESTful API actions"""
-from models.city import City
-from models.state import State
 from models.place import Place
 from models.review import Review
 from models.user import User
@@ -15,7 +13,7 @@ from models import storage
 def get_all_reviews(place_id):
     """retrieve the all reviews """
     place = storage.get(Place, place_id)
-    if place is None:
+    if not place:
         abort(404)
     review_list = [rev.to_dict() for rev in place.reviews]
     return jsonify(review_list), 200
@@ -61,7 +59,8 @@ def new_review(place_id):
     else:
         new_review = Review(**data)
         new_review.place_id = place_id
-        new_review.save()
+        storage.new(new_review)
+        storage.save()
         return jsonify(new_review.to_dict()), 201
 
 
@@ -74,10 +73,10 @@ def update_review(review_id):
     data = request.get_json()
     if data is None:
         return jsonify({"error": "Not a JSON"}), 400
-    else:
-        for key, val in data.items():
-            if key not in ['id', 'user_id', 'place_id',
-                           'created_at', 'updated_at']:
-                setattr(review, key, val)
-        review.save()
-        return jsonify(review.to_dict()), 200
+
+    for key, val in data.items():
+        if key not in ['id', 'user_id', 'place_id',
+                       'created_at', 'updated_at']:
+            setattr(review, key, val)
+    storage.save()
+    return jsonify(review.to_dict()), 200
