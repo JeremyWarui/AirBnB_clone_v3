@@ -114,12 +114,14 @@ class TestFileStorage(unittest.TestCase):
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
 
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_get(self):
         """check if instance found"""
         new_obj = State(name="Bali")
         found = models.storage.get(new_obj, "some_id")
         self.assertIsNone(found)
 
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_count(self):
         """test count of objs"""
         models.storage.reload()
