@@ -62,7 +62,7 @@ def update_review(review_id):
         abort(404)
     data = request.get_json()
     if data is None:
-        return jsonify({"error": "Not a JSON"})
+        return jsonify({"error": "Not a JSON"}), 400
     else:
         review.text = data["text"]
         review.save()
