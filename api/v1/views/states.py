@@ -17,29 +17,24 @@ def get_states():
 @app_views.route("/states/<state_id>", methods=["GET"], strict_slashes=False)
 def get_state(state_id):
     """retrive specific state"""
-    states = storage.all(State)
-    s_list = [state.to_dict() for state in states.values()]
-
-    for state in s_list:
-        if state_id == state['id']:
-            return jsonify(state)
-        else:
-            abort(404)
+    state = storage.get(State, state_id)
+    if state:
+        print(state)
+        return jsonify(state.to_dict())
+    else:
+        abort(404)
 
 
 @app_views.route("/states/<state_id>", methods=["DELETE"], strict_slashes=False)
 def del_state(state_id):
     """delete state of specific id"""
-    states = storage.all(State)
-    s_list = [state.to_dict() for state in states.values()]
-
-    for state in s_list:
-        if state_id == state['id']:
-            state.delete()
-            storage.save()
-            return jsonify({}), 200
-        else:
-            abort(404)
+    state = storage.get(State, state_id)
+    if state:
+        state.delete()
+        storage.save()
+        return jsonify({}), 200
+    else:
+        abort(404)
 
 
 @app_views.route("/states", methods=["POST"], strict_slashes=False)
@@ -61,4 +56,11 @@ def update_state(state_id):
     """updates state"""
     state = request.get_json()
     if not state:
-        return jsonify({"error": "NOt a JSON"}), 400
+        return jsonify({"error": "Not a JSON"}), 400
+
+    found_state = storage.get(State, state_id)
+    if found_state is None:
+        abort(404)
+    found_state.name = state['name']
+    found_state.save()
+    return jsonify(found_state.to_dict()), 200
