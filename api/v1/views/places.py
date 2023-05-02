@@ -54,7 +54,7 @@ def new_place(city_id):
         return jsonify({"error": "Missing user_id"})
     if not storage.get(User, data["user_id"]):
         abort(404)
-    if "name" not in data.keys():
+    if "name" not in data.items():
         return jsonify({"error": "Missing name"})
     place = Place(**data)
     place.city_id = city_id
