@@ -46,7 +46,7 @@ def new_review(place_id):
     """add new review"""
     place = storage.get(Place, place_id)
     user_id = data["user_id"]
-    if place is None:
+    if not place:
         abort(404)
     data = request.get_json()
     if not data:
