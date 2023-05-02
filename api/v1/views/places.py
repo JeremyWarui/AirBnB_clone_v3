@@ -49,13 +49,13 @@ def new_place(city_id):
         abort(404)
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Not a JSON"})
-    if "user_id" not in data.keys():
-        return jsonify({"error": "Missing user_id"})
+        return jsonify({"error": "Not a JSON"}), 400
+    if "user_id" not in data:
+        return jsonify({"error": "Missing user_id"}), 400
     if not storage.get(User, data["user_id"]):
         abort(404)
     if "name" not in data:
-        return jsonify({"error": "Missing name"})
+        return jsonify({"error": "Missing name"}), 400
     place = Place(**data)
     place.city_id = city_id
     storage.new(place)
