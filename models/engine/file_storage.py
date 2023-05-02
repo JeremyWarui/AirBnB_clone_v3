@@ -83,8 +83,7 @@ class FileStorage:
         count = 0
         if cls is None:
             count = len(self.__objects)
-        else:
-            for obj in self.__objects.values():
-                if cls in obj:
-                    count += 1
+        for obj in self.__objects.keys():
+            if cls in obj:
+                count += 1
         return count
