@@ -68,7 +68,7 @@ def new_review(place_id):
 def update_review(review_id):
     """edit the existing review"""
     review = storage.get(Review, review_id)
-    if review is None:
+    if not review:
         abort(404)
     data = request.get_json()
     if not data:
