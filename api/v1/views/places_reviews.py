@@ -45,7 +45,6 @@ def del_review(review_id):
 def new_review(place_id):
     """add new review"""
     place = storage.get(Place, place_id)
-    user_id = data["user_id"]
     if not place:
         abort(404)
     data = request.get_json()
@@ -53,12 +52,13 @@ def new_review(place_id):
         return jsonify({"error": "Not a JSON"}), 400
     if "user_id" not in data:
         return jsonify({"error": "Missing user_id"}), 400
-    if not storage.get(User, user_id):
+    if not storage.get(User, data["user_id"]):
         abort(404)
     if "text" not in data:
         return jsonify({"error": "Missing text"}), 400
+
     new_review = Review(**data)
-    new_review.place_id = place_id
+    new_review["place_id"] = place_id
     storage.new(new_review)
     storage.save()
     return jsonify(new_review.to_dict()), 201
