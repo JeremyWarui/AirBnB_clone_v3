@@ -3,7 +3,7 @@
 from models.place import Place
 from models.review import Review
 from models.user import User
-from flask import Flask, jsonify, abort, request
+from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
 
@@ -13,7 +13,7 @@ from models import storage
 def get_all_reviews(place_id):
     """retrieve the all reviews """
     place = storage.get(Place, place_id)
-    if place is not None:
+    if not place:
         abort(404)
     review_list = [rev.to_dict() for rev in place.reviews]
     return jsonify(review_list), 200
@@ -40,7 +40,7 @@ def del_review(review_id):
     return jsonify({}), 200
 
 
-@app_views.route("places/<place_id>/reviews", methods=["POST"],
+@app_views.route("/places/<place_id>/reviews", methods=["POST"],
                  strict_slashes=False)
 def new_review(place_id):
     """add new review"""
@@ -64,7 +64,7 @@ def new_review(place_id):
         return jsonify(new_review.to_dict()), 201
 
 
-@app_views.route("reviews/<review_id>", methods=["PUT"], strict_slashes=False)
+@app_views.route("/reviews/<review_id>", methods=["PUT"], strict_slashes=False)
 def update_review(review_id):
     """edit the existing review"""
     review = storage.get(Review, review_id)
