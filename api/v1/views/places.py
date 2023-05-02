@@ -72,7 +72,7 @@ def update_place(place_id):
     data = request.get_json()
     if not data:
         return jsonify({"error": "Not a JSON"}), 400
-    for key, val in data.keys():
+    for key, val in data.items():
         if key not in ["id", "user_id", "city_id", "created_at",
                        "updated_at"]:
             setattr(place, key, val)
