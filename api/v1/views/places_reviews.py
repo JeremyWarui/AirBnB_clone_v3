@@ -51,17 +51,17 @@ def new_review(place_id):
     data = request.get_json()
     if not data:
         return jsonify({"error": "Not a JSON"}), 400
-    elif "user_id" not in data:
+    if "user_id" not in data:
         return jsonify({"error": "Missing user_id"}), 400
-    elif storage.get(User, user_id) is None:
+    if not storage.get(User, user_id):
         abort(404)
-    elif "text" not in data:
+    if "text" not in data:
         return jsonify({"error": "Missing text"}), 400
-    else:
-        new_review = Review(**data)
-        new_review.place_id = place_id
-        new_review.save()
-        return jsonify(new_review.to_dict()), 201
+    new_review = Review(**data)
+    new_review.place_id = place_id
+    storage.new(new_review)
+    storage.save()
+    return jsonify(new_review.to_dict()), 201
 
 
 @app_views.route("/reviews/<review_id>", methods=["PUT"], strict_slashes=False)
@@ -71,9 +71,11 @@ def update_review(review_id):
     if review is None:
         abort(404)
     data = request.get_json()
-    if data is None:
+    if not data:
         return jsonify({"error": "Not a JSON"}), 400
-
-    review["text"] = data["text"]
-    review.save()
+    for key, val in data.items():
+        if key not in ["id", "user_id", "place_id", "created_at",
+                       "updated_at"]:
+            setattr(review, key, val)
+    storage.save()
     return jsonify(review.to_dict()), 200
