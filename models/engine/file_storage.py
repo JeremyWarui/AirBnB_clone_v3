@@ -80,11 +80,11 @@ class FileStorage:
 
     def count(self, cls=None):
         """count num of objects in storage"""
+        count = 0
         if cls is not None:
-            count = 0
-            for obj in self.__objects.keys():
-                if cls in obj:
-                    count += 1
-            return count
+            for obj in self.__objects.values():
+                if cls == obj.__class__ or cls == obj.__class__.__name__:
+                    count = count + 1
         else:
-            return len(self.__objects)
+            count = len(self.__objects)
+        return count
